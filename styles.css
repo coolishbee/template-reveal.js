@@ -1,0 +1,674 @@
+/* ============================================
+   Design Pattern Presentation
+   Custom Styles for FHD (1920x1080) Optimization
+   ============================================ */
+
+/* ============================================
+   Global Font & Layout Settings
+   ============================================ */
+:root {
+  --r-main-font-size: 28px;
+  --r-heading1-size: 2.2em;
+  --r-heading2-size: 1.6em;
+  --r-heading3-size: 1.2em;
+  --accent-cyan: #42affa;
+  --accent-orange: #d7d7d7;
+  --accent-green: #8ec8ff;
+  --card-bg: rgba(255, 255, 255, 0.08);
+  --panel-border: rgba(255, 255, 255, 0.18);
+  --panel-soft: rgba(255, 255, 255, 0.08);
+  --panel-soft-strong: rgba(255, 255, 255, 0.12);
+}
+
+.reveal {
+  font-size: var(--r-main-font-size);
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4 {
+  font-family: "Pretendard Variable", Pretendard, -apple-system,
+    BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI",
+    "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  font-weight: 700;
+}
+
+.reveal h1 {
+  font-size: var(--r-heading1-size);
+  margin-bottom: 0.3em;
+  text-shadow: none;
+}
+
+.reveal h2 {
+  font-size: var(--r-heading2-size);
+  margin-bottom: 0.3em;
+}
+
+.reveal p,
+.reveal li {
+  line-height: 1.4;
+}
+
+.reveal .slides section {
+  padding: 20px 40px;
+}
+
+/* ============================================
+   PAGE 1: Intro — Two Column Layout
+   ============================================ */
+.page-1 .intro-container {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.page-1 .left-column { flex: 1; }
+.page-1 .right-column { flex: 0 0 400px; }
+
+.page-1.page-1-cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+}
+
+.page-1 .intro-cover {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+  transform: translateX(-20px);
+}
+
+.page-1 .intro-cover .badge {
+  margin-bottom: 28px;
+  font-size: 0.8em;
+  padding: 10px 20px;
+}
+
+.page-1 .intro-cover h1 {
+  font-size: 2.75em;
+  margin-bottom: 0.14em;
+}
+
+.page-1 .intro-cover .subtitle {
+  font-size: 0.92em;
+  margin-bottom: 0;
+}
+
+.page-1 .intro-single {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.page-1 .intro-single.intro-single-narrow {
+  max-width: 780px;
+}
+
+.page-1 .intro-single h2 {
+  margin-bottom: 0.8em;
+}
+
+.page-1 .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 0.65em;
+  color: var(--accent-cyan);
+  margin-bottom: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.page-1 h1 {
+  font-size: 2em;
+  color: #fff;
+  margin-bottom: 0.2em;
+  text-shadow: none;
+  line-height: 1.1;
+}
+
+.page-1 h1 .highlight { color: var(--accent-cyan); font-weight: 700; }
+
+.page-1 .subtitle {
+  font-size: 0.7em;
+  color: #b8b8b8;
+  margin-bottom: 1.2em;
+  line-height: 1.5;
+}
+
+.page-1 .concern-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1em 0;
+}
+
+.page-1 .concern-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-orange);
+  font-size: 0.78em;
+  color: #d0d0d0;
+  line-height: 1.45;
+}
+
+.page-1.page-1-concerns .concern-list li.fragment.concern-focus {
+  opacity: 1;
+  visibility: inherit;
+  filter: blur(8px);
+  transform: translateY(24px) scale(0.98);
+  transition: filter 0.45s ease, transform 0.45s ease, opacity 0.45s ease,
+    background-color 0.35s ease, border-left-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.page-1.page-1-concerns .concern-list li.fragment.concern-focus.visible {
+  filter: none;
+  transform: translateY(0) scale(1);
+}
+
+.page-1.page-1-concerns .concern-list li.fragment.concern-focus.visible:not(.current-fragment) {
+  opacity: 0.45;
+}
+
+.page-1.page-1-concerns .concern-list li.fragment.concern-focus.current-fragment {
+  opacity: 1;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.24);
+}
+
+.page-1.page-1-concerns .concern-list li.fragment.concern-final.current-fragment {
+  transform: translateY(0) scale(1.02);
+  border-left-color: var(--accent-cyan);
+  background: rgba(66, 175, 250, 0.08);
+}
+
+.page-1 .concern-num {
+  color: var(--accent-orange);
+  font-weight: 700;
+  flex-shrink: 0;
+  font-size: 1.18em;
+}
+
+.page-1 .toc-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--panel-border);
+  text-align: left;
+}
+
+.page-1 .toc-card h3 {
+  font-size: 0.85em;
+  color: var(--accent-cyan);
+  margin: 0 0 14px 0;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.page-1.page-1-toc .toc-card h3 {
+  font-size: 1.02em;
+  margin-bottom: 18px;
+}
+
+.page-1 .toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.page-1 .toc-list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.65em;
+  color: #c7c7c7;
+}
+
+.page-1.page-1-toc .toc-list li {
+  gap: 14px;
+  padding: 11px 0;
+  font-size: 0.78em;
+}
+
+.page-1 .toc-list li:first-child { border-top: none; }
+
+.page-1 .toc-num {
+  width: 22px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-cyan);
+  font-size: 0.85em;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.page-1.page-1-toc .toc-num {
+  width: 26px;
+  height: 26px;
+  font-size: 0.95em;
+}
+
+/* ============================================
+   PAGE 2, 7: 커버 슬라이드
+   reveal.js data-background-* 속성으로 비율 유지한 배경 이미지를 중앙 배치.
+   섹션 안에 콘텐츠 없음 → 패딩 0 처리
+   ============================================ */
+.page-cover {
+  padding: 0 !important;
+}
+
+/* ============================================
+   공통: 콘텐츠 슬라이드 제목
+   ============================================ */
+.slide-title {
+  font-size: 1.3em;
+  color: #fff;
+  margin: 0 auto 0.5em;
+  max-width: 1100px;
+  text-align: left;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.slide-title .slide-tag {
+  font-size: 0.48em;
+  color: var(--accent-cyan);
+  font-weight: 600;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+/* ============================================
+   공통: 패턴 카드
+   ============================================ */
+.pattern-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 20px 24px;
+  border: 1px solid var(--panel-border);
+  text-align: left;
+}
+
+.pattern-card h3 {
+  font-size: 0.85em;
+  color: var(--accent-cyan);
+  margin: 0 0 12px 0;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pattern-card p {
+  font-size: 0.65em;
+  color: #c7c7c7;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.pattern-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.pattern-card ul li {
+  font-size: 0.65em;
+  color: #c7c7c7;
+  padding: 7px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  line-height: 1.45;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.pattern-card ul li:first-child { border-top: none; }
+
+.pattern-card ul li .label {
+  color: var(--accent-cyan);
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.pattern-card ul li .pro {
+  color: var(--accent-green);
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.pattern-card ul li .con {
+  color: var(--accent-orange);
+  font-weight: 700;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+/* ============================================
+   PAGE 3, 11: 정의
+   ============================================ */
+.page-definition .def-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-definition .def-layout.text-only {
+  display: block;
+  max-width: 960px;
+}
+
+.page-definition .def-text {
+  flex: 1;
+}
+
+.page-definition .def-image {
+  flex: 0 0 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-definition .def-image img {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.page-definition .keyword-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.page-definition .keyword-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 0.56em;
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+/* ============================================
+   PAGE 4, 9: 구성요소 — 카드 그리드
+   ============================================ */
+.page-components .components-grid {
+  display: grid;
+  gap: 14px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.page-components .components-grid.col-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.page-components .components-grid.col-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.page-components .comp-card {
+  background: var(--card-bg);
+  border-radius: 10px;
+  padding: 20px 18px;
+  border: 1px solid var(--panel-border);
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.page-components .comp-card .comp-name {
+  font-size: 0.78em;
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+.page-components .comp-card .comp-alias {
+  font-size: 0.55em;
+  color: #9b9b9b;
+  font-weight: 500;
+}
+
+.page-components .comp-card .comp-role {
+  font-size: 0.62em;
+  color: #c7c7c7;
+  line-height: 1.5;
+}
+
+.page-components .comp-card .comp-example {
+  font-size: 0.56em;
+  color: #aaaaaa;
+  font-style: italic;
+}
+
+.page-components .comp-card code {
+  font-size: 0.95em;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  color: var(--accent-cyan);
+}
+
+/* ============================================
+   PAGE 4, 7, 8, 12: 이미지 단독 슬라이드
+   ============================================ */
+.page-diagram {
+  text-align: left;
+}
+
+.page-diagram .diagram-wrap {
+  max-width: 1180px;
+  margin: 0 auto 18px;
+  background: rgba(10, 14, 26, 0.9);
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 500px;
+}
+
+.page-diagram .diagram-wrap img {
+  max-width: 100%;
+  max-height: 520px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.page-diagram .diagram-wrap.wide img {
+  max-height: 460px;
+}
+
+.page-diagram .diagram-wrap.portrait img {
+  max-height: 560px;
+}
+
+.page-command-stack .diagram-wrap.portrait img {
+  max-height: 380px;
+}
+
+.page-diagram .diagram-caption {
+  max-width: 1180px;
+  margin: 0 auto;
+  font-size: 0.62em;
+  color: #c7c7c7;
+}
+
+/* ============================================
+   PAGE 8: 코드 예제
+   ============================================ */
+.page-code {
+  text-align: left;
+}
+
+.page-code .code-wrap {
+  max-width: 1180px;
+  margin: 0 auto 18px;
+}
+
+.page-code pre {
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.page-code code {
+  max-height: 560px;
+  font-size: 0.8em;
+  line-height: 1.45;
+}
+
+.page-code .code-caption {
+  max-width: 1180px;
+  margin: 0 auto;
+  font-size: 0.62em;
+  color: #c7c7c7;
+}
+
+/* ============================================
+   PAGE 6, 14: UML — 이미지
+   ============================================ */
+.page-uml {
+  text-align: left;
+}
+
+.page-uml .uml-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: rgba(10, 14, 26, 0.9);
+  border-radius: 12px;
+  border: 1px solid var(--panel-border);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.page-uml .uml-wrap img {
+  max-width: 100%;
+  max-height: 440px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+/* ============================================
+   PAGE 9, 15: 장단점 — 카드 + 요약
+   ============================================ */
+.page-pros-cons .pros-cons-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  max-width: 1100px;
+  margin: 0 auto 16px;
+  align-items: start;
+}
+
+.page-pros-cons .use-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  border: 1px solid var(--panel-border);
+  padding: 14px 22px;
+}
+
+.page-pros-cons .use-section h3 {
+  font-size: 0.78em;
+  color: #dfe7ef;
+  margin: 0 0 10px 0;
+  font-weight: 700;
+}
+
+.page-pros-cons .use-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.page-pros-cons .use-section ul li {
+  font-size: 0.6em;
+  color: #c7c7c7;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+  padding: 5px 14px;
+  line-height: 1.4;
+}
+
+/* ============================================
+   PAGE 12: 선택 가이드 + Q&A
+   ============================================ */
+.page-guide {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  text-align: center;
+}
+
+.page-guide .qa-block {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.page-guide .qa-block h2 {
+  width: 100%;
+  text-align: center;
+  transform: translateX(-20px);
+  font-size: 2.2em;
+  color: #fff;
+  text-shadow: none;
+  margin: 0;
+}
+
+.page-guide .qa-reference {
+  margin: 28px 0 0;
+  font-size: 0.72em;
+  color: #b8b8b8;
+}
+
+.page-guide .qa-reference a {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  word-break: break-all;
+}

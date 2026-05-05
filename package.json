@@ -1,0 +1,12 @@
+{
+  "name": "design-pattern-presentation",
+  "version": "1.0.0",
+  "description": "Design Pattern Presentation with reveal.js",
+  "scripts": {
+    "start": "npx serve .",
+    "build": "rm -rf _site && mkdir -p _site/node_modules/reveal.js && cp index.html styles.css _site/ && cp -R public _site/public && cp -R node_modules/reveal.js/dist _site/node_modules/reveal.js/dist && cp -R node_modules/reveal.js/plugin _site/node_modules/reveal.js/plugin"
+  },
+  "dependencies": {
+    "reveal.js": "^5.2.1"
+  }
+}

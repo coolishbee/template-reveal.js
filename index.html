@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="디자인 패턴 — Command & Observer 패턴 게임 실무 적용"
+    />
+    <title>디자인 패턴 — Command & Observer</title>
+
+    <!-- Pretendard Variable Font -->
+    <link
+      rel="stylesheet"
+      as="style"
+      crossorigin
+      href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"
+    />
+
+    <!-- Reveal.js core styles -->
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/reset.css" />
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/reveal.css" />
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/theme/black.css" />
+
+    <!-- Syntax highlighting -->
+    <link
+      rel="stylesheet"
+      href="node_modules/reveal.js/plugin/highlight/monokai.css"
+    />
+
+    <!-- Custom styles -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+
+        <!-- ============================================
+             PAGE 1: 인트로 — 표지
+             ============================================ -->
+        <section class="page-1 page-1-cover">
+          <div class="intro-cover">
+            <div class="badge">Tech Support — Core Client</div>
+            <h1><span class="highlight">디자인 패턴</span></h1>
+            <p class="subtitle">Command &amp; Observer — 게임 실무 적용</p>
+          </div>
+
+          <aside class="notes">
+            오늘 발표는 커맨드와 옵저버 패턴을 게임 실무 관점에서 정리한 내용입니다.
+            각 패턴이 언제 도움이 되고, 언제 과한 설계가 되는지 함께 보겠습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 2: 인트로 — 부정적 시각
+             ============================================ -->
+        <section class="page-1 page-1-concerns">
+          <div class="intro-single">
+            <h2>디자인 패턴에 대해 보통 부정적인 시각</h2>
+
+            <ul class="concern-list">
+              <li class="fragment custom concern-focus" data-fragment-index="1">
+                <span class="concern-num">01</span>
+                적용 시키면 구조가 더 복잡해진다.
+              </li>
+              <li class="fragment custom concern-focus" data-fragment-index="2">
+                <span class="concern-num">02</span>
+                적용 시키면 퍼포먼스가 떨어진다.
+              </li>
+              <li class="fragment custom concern-focus concern-final" data-fragment-index="3">
+                <span class="concern-num">03</span>
+                게임은 기획이 바뀌면 설계를 바꿔야 할 때가 있다.
+                <br />= 어차피 나중에 갈아 엎게 되어있다.
+              </li>
+            </ul>
+          </div>
+
+          <aside class="notes">
+            디자인 패턴에 대해 많이들 부정적인 시각을 가지고 있습니다.
+            복잡해진다, 퍼포먼스 떨어진다, 어차피 갈아 엎는다.
+            이 시각이 왜 생기는지부터 짚고 시작하겠습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 3: 인트로 — 목차
+             ============================================ -->
+        <section class="page-1 page-1-toc">
+          <div class="intro-single intro-single-narrow">
+            <div class="toc-card">
+              <h3>목차</h3>
+              <ol class="toc-list">
+                <li><span class="toc-num">1</span>커맨드(Command) 패턴은 무엇인가?</li>
+                <li><span class="toc-num">2</span>옵저버(Observer) 패턴은 무엇인가?</li>
+                <li><span class="toc-num">3</span>게임 실무 사용 예</li>
+                <li><span class="toc-num">4</span>Q&amp;A</li>
+              </ol>
+            </div>
+          </div>
+
+          <aside class="notes">
+            오늘은 먼저 커맨드와 옵저버가 무엇인지 보고,
+            게임 실무 사용 예를 본 뒤 마지막에 Q&A로 마무리하겠습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 4: 커맨드 패턴 커버
+             ============================================ -->
+        <section
+          class="page-cover page-cover-command"
+          data-background-image="public/command/command-bg.png"
+          data-background-size="contain"
+          data-background-position="center center"
+          data-background-repeat="no-repeat"
+        >
+          <aside class="notes">
+            커맨드 패턴입니다. "명령을 패킹하여 전달한다"는 컨셉입니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 5: 커맨드 패턴 — 정의
+             ============================================ -->
+        <section class="page-definition">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 01 / 06</span>
+          </h2>
+
+          <div class="def-layout text-only">
+            <div class="def-text pattern-card">
+              <h3>📌 정의</h3>
+              <p>
+                <strong>요청을 객체의 형태로 캡슐화</strong>하여 사용자가 보낸 요청을 나중에
+                이용할 수 있도록 메서드 이름, 매개변수 등 요청에 필요한 정보를 저장·로깅·취소할 수
+                있게 하는 패턴.
+                <br /><br />
+                이 패턴을 통해 <strong>실행(Do), 취소(Undo), 재실행(Redo), 명령 큐잉(Queuing),
+                로깅(Logging), 네트워크 전송(Remote Invocation)</strong> 등을 가능하게 하여
+                명령의 <strong>실행 시점과 호출 시점을 분리</strong>하고
+                유연한 명령 제어를 구현할 수 있다.
+              </p>
+
+              <div class="keyword-row fragment" data-fragment-index="1">
+                <span class="keyword-chip">요청의 객체화</span>
+                <span class="keyword-chip">Do / Undo / Redo</span>
+                <span class="keyword-chip">Command Queuing</span>
+                <span class="keyword-chip">Logging</span>
+                <span class="keyword-chip">Remote Invocation</span>
+                <span class="keyword-chip">실행·호출 시점 분리</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            커맨드 패턴의 핵심은 "요청 자체를 객체로 만든다"는 것입니다.
+            함수 호출을 객체로 감싸면 나중에 실행하거나, 취소하거나, 큐에 쌓거나, 네트워크로 보낼 수 있습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 4: 커맨드 패턴 — 개념 흐름도
+             ============================================ -->
+        <section class="page-diagram">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 02 / 06</span>
+          </h2>
+
+          <div class="diagram-wrap wide">
+            <img
+              src="public/command/command-01.png"
+              alt="Command Pattern 흐름도 — action/request, ICommand interface, Command object, Command stack/buffer, Invoker"
+            />
+          </div>
+
+          <p class="diagram-caption pattern-card">
+            요청이 인터페이스를 거쳐 커맨드 객체로 포장되고, 히스토리나 버퍼에 쌓인 뒤 Invoker가 실행되는 흐름이다.
+          </p>
+
+          <aside class="notes">
+            이 그림은 커맨드 패턴의 전체 흐름을 한 번에 보여줍니다.
+            action과 request가 ICommand를 거쳐 Command object가 되고, 스택이나 버퍼에 쌓인 뒤 Invoker가 실행합니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 5: 커맨드 패턴 — 구성요소
+             ============================================ -->
+        <section class="page-components">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 03 / 06</span>
+          </h2>
+
+          <div class="components-grid col-4">
+            <div class="comp-card fragment" data-fragment-index="1">
+              <div class="comp-name">Command</div>
+              <div class="comp-alias">명령 인터페이스</div>
+              <div class="comp-role">
+                <code>Execute()</code>와 선택적으로 <code>Undo()</code>를 선언하는 인터페이스.
+                모든 구체 커맨드가 이를 구현한다.
+              </div>
+              <div class="comp-example">예: ICommand, ISkillCommand</div>
+            </div>
+
+            <div class="comp-card fragment" data-fragment-index="2">
+              <div class="comp-name">ConcreteCommand</div>
+              <div class="comp-alias">구체 명령</div>
+              <div class="comp-role">
+                Command 인터페이스를 구현하며, Receiver에 실제 동작을 위임한다.
+                실행에 필요한 상태(방향, 거리 등)를 보유한다.
+              </div>
+              <div class="comp-example">예: MoveCommand, AttackCommand</div>
+            </div>
+
+            <div class="comp-card fragment" data-fragment-index="3">
+              <div class="comp-name">Receiver</div>
+              <div class="comp-alias">수신자</div>
+              <div class="comp-role">
+                실제 동작을 수행하는 대상.
+                커맨드로부터 호출받아 비즈니스 로직을 실행한다.
+              </div>
+              <div class="comp-example">예: MoveCommandReceiver, Character, Inventory</div>
+            </div>
+
+            <div class="comp-card fragment" data-fragment-index="4">
+              <div class="comp-name">Invoker</div>
+              <div class="comp-alias">호출자</div>
+              <div class="comp-role">
+                커맨드를 생성·스케줄·실행·취소하는 주체.
+                커맨드 히스토리를 보관해 Undo/Redo를 제공한다.
+              </div>
+              <div class="comp-example">예: InputHandler, SkillManager, AIController</div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            네 가지 역할을 기억하세요.
+            Command는 인터페이스, ConcreteCommand는 구현체, Receiver는 실제 일하는 객체, Invoker는 커맨드를 관리하는 주체입니다.
+            Invoker가 히스토리 스택을 들고 있으면 Undo/Redo가 자연스럽게 나옵니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 6: 커맨드 패턴 — UML
+             ============================================ -->
+        <section class="page-uml">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 04 / 06</span>
+          </h2>
+
+          <div class="uml-wrap">
+            <img
+              src="public/command/command-04.png"
+              alt="Command Pattern UML — InputManager, CommandInvoker, ICommand, MoveCommand, PlayerMover"
+            />
+          </div>
+
+          <aside class="notes">
+            InputManager(Invoker)가 RunPlayerCommand로 CommandInvoker를 호출합니다.
+            CommandInvoker는 undoStack을 관리하며 ExecuteCommand와 UndoCommand를 제공합니다.
+            ICommand 인터페이스를 MoveCommand가 구현하고, 실제 이동은 PlayerMover(Receiver)에 위임합니다.
+            Undo는 undoStack에서 꺼내 Undo()를 호출하면 됩니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 7: 커맨드 패턴 — 큐 기반 히스토리
+             ============================================ -->
+        <section class="page-diagram">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 05 / 06</span>
+          </h2>
+
+          <div class="diagram-wrap wide">
+            <img
+              src="public/command/command-02.png"
+              alt="Command Queue — Older to Newer, Undo, Current index, Redo"
+            />
+          </div>
+
+          <p class="diagram-caption pattern-card">
+            커맨드 큐에서 현재 인덱스를 기준으로 Undo와 Redo를 관리하는 구조다. 선형 히스토리 개념을 설명하기 쉽다.
+          </p>
+
+          <aside class="notes">
+            전체 히스토리를 한 줄로 놓고 현재 위치를 옮기는 방식입니다.
+            Undo는 과거 방향, Redo는 미래 방향으로 인덱스를 이동시키는 개념으로 이해할 수 있습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 8: 커맨드 패턴 — Undo/Redo 스택
+             ============================================ -->
+        <section class="page-diagram page-command-stack">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 06 / 06</span>
+          </h2>
+
+          <div class="diagram-wrap portrait">
+            <img
+              src="public/command/command-03.png"
+              alt="Undo stack and Redo stack with push and pop flow"
+            />
+          </div>
+
+          <p class="diagram-caption pattern-card">
+            자료구조 스택 두 개로 구현하는 가장 전형적인 형태다. 새 명령은 Undo 스택에 Push되고, Undo 시 Redo 스택으로 이동해 실행 취소와 재실행 흐름을 단순하게 유지할 수 있다.
+          </p>
+
+          <aside class="notes">
+            실무에서는 이중 스택 방식이 자주 쓰입니다.
+            새 명령은 Undo 스택으로, Undo 하면 Redo 스택으로, Redo 하면 다시 Undo 스택으로 돌아갑니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 9: 커맨드 패턴 — 예제 코드
+             ============================================ -->
+        <section class="page-code">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 예제 코드</span>
+          </h2>
+
+          <div class="code-wrap">
+            <pre><code data-trim data-line-numbers="1-5|7-14|16-24|25-34|36-46" class="language-csharp">public interface ICommand
+{
+    void Execute();
+    void Undo();
+}
+
+public class CommandInvoker
+{
+    // Undo용 커맨드 스택
+    private static Stack&lt;ICommand&gt; s_UndoStack = new Stack&lt;ICommand&gt;();
+
+    // Redo 가능한 커맨드를 저장하는 두 번째 스택
+    private static Stack&lt;ICommand&gt; s_RedoStack = new Stack&lt;ICommand&gt;();
+
+    // 커맨드를 즉시 실행하고 Undo 스택에 저장
+    public static void ExecuteCommand(ICommand command)
+    {
+        command.Execute();
+        s_UndoStack.Push(command);
+
+        // 새로운 명령이 실행되면 Redo 이력은 무효화
+        s_RedoStack.Clear();
+    }
+
+    public static void UndoCommand()
+    {
+        // 되돌릴 커맨드가 있으면
+        if (s_UndoStack.Count > 0)
+        {
+            ICommand activeCommand = s_UndoStack.Pop();
+            s_RedoStack.Push(activeCommand);
+            activeCommand.Undo();
+        }
+    }
+
+    public static void RedoCommand()
+    {
+        // 다시 실행할 커맨드가 있으면
+        if (s_RedoStack.Count > 0)
+        {
+            ICommand activeCommand = s_RedoStack.Pop();
+            s_UndoStack.Push(activeCommand);
+            activeCommand.Execute();
+        }
+    }
+}</code></pre>
+          </div>
+
+          <p class="code-caption pattern-card">
+            ICommand는 Execute와 Undo를 공통 인터페이스로 제공하고, CommandInvoker는 Undo/Redo 스택을 분리해 실행 이력과 재실행 흐름을 함께 관리한다.
+          </p>
+
+          <aside class="notes">
+            실제 코드로 보면 구조가 더 명확해집니다.
+            ICommand는 Execute와 Undo를 노출하고,
+            CommandInvoker는 Undo 스택과 Redo 스택을 분리해서 관리합니다.
+            새 명령을 실행하면 Undo 스택에 저장하고 Redo 스택은 비우며,
+            Undo 시에는 Undo 스택에서 꺼내 Redo 스택으로 옮기고,
+            Redo 시에는 반대로 다시 Execute를 호출합니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 10: 커맨드 패턴 — 장단점
+             ============================================ -->
+        <section class="page-pros-cons">
+          <h2 class="slide-title">
+            커맨드(Command) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 정리</span>
+          </h2>
+
+          <div class="pros-cons-layout">
+            <div class="pattern-card fragment" data-fragment-index="1">
+              <h3>✅ 장점</h3>
+              <ul>
+                <li>
+                  <span class="pro">확장성</span>
+                  <span>Invoker와 Receiver를 분리 → 새로운 커맨드·기능 추가 시 기존 코드 무수정</span>
+                </li>
+                <li>
+                  <span class="pro">시퀀싱</span>
+                  <span>Undo/Redo, 매크로, 명령 큐 구현이 자연스럽게 따라옴</span>
+                </li>
+                <li>
+                  <span class="pro">입력 추상화</span>
+                  <span>입력장치·플랫폼에 독립적인 행위 매핑 가능 (키보드·패드·AI 동일 처리)</span>
+                </li>
+                <li>
+                  <span class="pro">직렬화</span>
+                  <span>커맨드 객체를 네트워크 전송·리플레이 파일 저장에 활용 가능</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="pattern-card fragment" data-fragment-index="2">
+              <h3>⚠️ 단점</h3>
+              <ul>
+                <li>
+                  <span class="con">복잡성</span>
+                  <span>각 명령이 독립 클래스 → 커맨드 수만큼 클래스 파일 증가</span>
+                </li>
+                <li>
+                  <span class="con">이해도</span>
+                  <span>패턴 미숙지 팀원에게 진입 장벽, 유지보수 시 전체 구조 파악 필요</span>
+                </li>
+                <li>
+                  <span class="con">오버엔지니어링</span>
+                  <span>단순 일회성 동작엔 과도한 설계 — 필요할 때만 도입</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="use-section fragment" data-fragment-index="3">
+            <h3>🎯 언제 쓰나</h3>
+            <ul>
+              <li>Undo / Redo / 리플레이가 필요할 때</li>
+              <li>입력장치·플랫폼을 행위에서 분리하고 싶을 때</li>
+              <li>매크로·스킬 시퀀싱·AI 행동 큐를 구현할 때</li>
+              <li>명령을 네트워크로 직렬화·전송해야 할 때</li>
+              <li>비동기 일괄 실행(작업 큐)이 필요할 때</li>
+            </ul>
+          </div>
+
+          <aside class="notes">
+            앞에서 본 큐 방식과 이중 스택 방식을 바탕으로 장단점을 정리하는 슬라이드입니다.
+            단점은 클래스가 많아지는 것인데, 제네릭이나 람다로 어느 정도 완화할 수 있습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 11: 옵저버 패턴 커버
+             ============================================ -->
+        <section
+          class="page-cover page-cover-observer"
+          data-background-image="public/observer/observer-bg.png"
+          data-background-size="contain"
+          data-background-position="center center"
+          data-background-repeat="no-repeat"
+        >
+          <aside class="notes">
+            옵저버 패턴입니다. "다른 오브젝트를 관찰하고 반응한다"는 컨셉입니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 12: 옵저버 패턴 — 정의
+             ============================================ -->
+        <section class="page-definition">
+          <h2 class="slide-title">
+            옵저버(Observer) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 01 / 05</span>
+          </h2>
+
+          <div class="def-layout text-only">
+            <div class="def-text pattern-card">
+              <h3>📌 정의</h3>
+              <p>
+                하나의 객체(Subject)의 상태 변화가 있을 때, 그 객체와 연관된 다른 객체들(Observer)에게
+                <strong>자동으로 알림(Notify)이 전달</strong>되어 상태를 동기화하거나 반응하도록 하는 패턴.
+                <br /><br />
+                주체와 구독자를 분리하여 <strong>느슨한 결합(Loose Coupling)</strong>을 달성하고,
+                <strong>이벤트 기반 시스템(Event-Driven Architecture)</strong> 구현을 용이하게 한다.
+                UI 바인딩, 멀티플레이 동기화, MVVM 등 광범위하게 활용된다.
+              </p>
+
+              <div class="keyword-row fragment" data-fragment-index="1">
+                <span class="keyword-chip">자동 알림(Notify)</span>
+                <span class="keyword-chip">느슨한 결합</span>
+                <span class="keyword-chip">이벤트 기반</span>
+                <span class="keyword-chip">Subscribe / Unsubscribe</span>
+                <span class="keyword-chip">Publisher / Subscriber</span>
+                <span class="keyword-chip">MVVM · UniRx · R3</span>
+              </div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            옵저버 패턴의 핵심은 "상태 변화를 구독자에게 자동으로 전파"한다는 것입니다.
+            Subject는 Observer가 무엇을 하는지 알 필요 없이 인터페이스만 바라봅니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 13: 옵저버 패턴 — 개념도
+             ============================================ -->
+        <section class="page-diagram">
+          <h2 class="slide-title">
+            옵저버(Observer) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 02 / 05</span>
+          </h2>
+
+          <div class="diagram-wrap portrait">
+            <img
+              src="public/observer/observer-01.png"
+              alt="Observer Pattern concept — Subject notifies three observers"
+            />
+          </div>
+
+          <p class="diagram-caption pattern-card">
+            Subject 하나가 여러 Observer에게 같은 시점에 알림을 전파하는 전형적인 브로드캐스트 구조다.
+          </p>
+
+          <aside class="notes">
+            Subject는 구독자 목록만 알고 있고, 변화가 생기면 모든 Observer에게 동시에 알립니다.
+            각 Observer는 자기 역할에 맞게 독립적으로 반응합니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 14: 옵저버 패턴 — 구성요소
+             ============================================ -->
+        <section class="page-components">
+          <h2 class="slide-title">
+            옵저버(Observer) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 03 / 05</span>
+          </h2>
+
+          <div class="components-grid col-3">
+            <div class="comp-card fragment" data-fragment-index="1">
+              <div class="comp-name">Subject</div>
+              <div class="comp-alias">주체 / 발행자 / Publisher</div>
+              <div class="comp-role">
+                상태를 보유하며 Observer 목록을 관리한다.
+                <code>Subscribe()</code>, <code>Unsubscribe()</code>로 구독을 제어하고,
+                상태 변화 시 <code>Notify()</code>로 모든 Observer에게 알림을 전송한다.
+              </div>
+              <div class="comp-example">예: GameStateManager, PlayerStats, EventBus</div>
+            </div>
+
+            <div class="comp-card fragment" data-fragment-index="2">
+              <div class="comp-name">Observer</div>
+              <div class="comp-alias">구독자 / Subscriber</div>
+              <div class="comp-role">
+                Subject의 변화를 감시하며,
+                변경이 발생하면 <code>Update()</code> 콜백을 통해 반응한다.
+                Subject에 대한 직접 참조 없이 느슨하게 결합된다.
+              </div>
+              <div class="comp-example">예: HpBarUI, QuestTracker, SoundManager</div>
+            </div>
+
+            <div class="comp-card fragment" data-fragment-index="3">
+              <div class="comp-name">Notification</div>
+              <div class="comp-alias">이벤트 인자 / 메시지</div>
+              <div class="comp-role">
+                상태 변경 시 Observer에게 전달되는 데이터.
+                무엇이 어떻게 바뀌었는지 담아 Observer가 적절히 반응하도록 한다.
+              </div>
+              <div class="comp-example">예: PlayerDeadEvent, HpChangedArgs, StateChangedEvent</div>
+            </div>
+          </div>
+
+          <aside class="notes">
+            Subject가 Observer 리스트를 들고 있고, 상태가 바뀌면 Notify를 호출해 Update를 순차 실행합니다.
+            Observer는 Subject를 몰라도 되고, Subject는 Observer가 무슨 UI인지 몰라도 됩니다.
+            이게 느슨한 결합의 핵심입니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 15: 옵저버 패턴 — UML
+             ============================================ -->
+        <section class="page-uml">
+          <h2 class="slide-title">
+            옵저버(Observer) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 04 / 05</span>
+          </h2>
+
+          <div class="uml-wrap">
+            <img
+              src="public/observer/observer-02.png"
+              alt="Observer Pattern UML — Subject, Observer1, Observer2 (C# 이벤트 방식)"
+            />
+          </div>
+
+          <aside class="notes">
+            Subject가 ThingHappened라는 Action 이벤트를 갖고 있습니다.
+            Observer1, Observer2가 이 이벤트를 구독(subscribes to event)하고,
+            Subject가 DoThing()을 실행하면 ThingHappened 이벤트가 발생해 각 Observer의 OnThingHappened()가 호출됩니다.
+            C# 이벤트 시스템을 활용한 전형적인 구현 방식입니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 16: 옵저버 패턴 — 예제 코드
+             ============================================ -->
+        <section class="page-code">
+          <h2 class="slide-title">
+            옵저버(Observer) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 예제 코드</span>
+          </h2>
+
+          <div class="code-wrap">
+            <pre><code data-trim data-line-numbers="1-15|17-45" class="language-csharp">public class Subject : MonoBehaviour
+{
+    // 델리게이트로 직접 이벤트 정의
+    // public delegate void ExampleDelegate();
+    // public static event ExampleDelegate ExampleEvent;
+
+    // 또는 System.Action 사용
+    public event Action ThingHappened;
+
+    // 이벤트 발행 — 모든 구독자에게 전파
+    public void DoThing()
+    {
+        ThingHappened?.Invoke();
+    }
+}
+
+public class ExampleObserver : MonoBehaviour
+{
+    // 관찰 대상 Subject 참조
+    [SerializeField] Subject subjectToObserve;
+
+    // 이벤트 핸들러: Subject의 이벤트 시그니처와 일치해야 함
+    private void OnThingHappened()
+    {
+        // 이벤트에 반응하는 로직 작성
+    }
+
+    private void Awake()
+    {
+        // Subject 이벤트 구독 등록
+        if (subjectToObserve != null)
+        {
+            subjectToObserve.ThingHappened += OnThingHappened;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 오브젝트 소멸 시 구독 해제
+        if (subjectToObserve != null)
+        {
+            subjectToObserve.ThingHappened -= OnThingHappened;
+        }
+    }
+}</code></pre>
+          </div>
+
+          <p class="code-caption pattern-card">
+            Subject는 ThingHappened 이벤트를 발행하고, ExampleObserver는 Awake에서 구독하고 OnDestroy에서 반드시 해제한다. 구독 해제를 빠뜨리면 메모리 누수가 발생한다.
+          </p>
+
+          <aside class="notes">
+            이 예제는 C# 이벤트 기반 옵저버의 가장 기본 형태입니다.
+            Subject는 ThingHappened 이벤트를 발행하고,
+            ExampleObserver는 Awake에서 구독하고 OnDestroy에서 반드시 해제합니다.
+            발표에서는 구독 해제가 왜 중요한지, 메모리 누수 위험을 강조하면 좋습니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 17: 옵저버 패턴 — 장단점
+             ============================================ -->
+        <section class="page-pros-cons">
+          <h2 class="slide-title">
+            옵저버(Observer) 패턴
+            <span class="slide-tag">BEHAVIORAL PATTERN · 05 / 05</span>
+          </h2>
+
+          <div class="pros-cons-layout">
+            <div class="pattern-card fragment" data-fragment-index="1">
+              <h3>✅ 장점</h3>
+              <ul>
+                <li>
+                  <span class="pro">느슨한 결합</span>
+                  <span>Subject와 Observer가 인터페이스로만 연결 → 상호 수정 없이 독립 변경 가능</span>
+                </li>
+                <li>
+                  <span class="pro">재사용성</span>
+                  <span>Subject와 Observer를 독립적으로 재사용하기 쉬움</span>
+                </li>
+                <li>
+                  <span class="pro">확장성</span>
+                  <span>기존 코드 수정 없이 새 Observer만 추가하면 기능 확장 완료</span>
+                </li>
+                <li>
+                  <span class="pro">이벤트 기반</span>
+                  <span>UI(HP바·코인·퀘스트), 네트워크, 데이터 변경 이벤트 처리에 적합</span>
+                </li>
+              </ul>
+            </div>
+
+            <div class="pattern-card fragment" data-fragment-index="2">
+              <h3>⚠️ 단점</h3>
+              <ul>
+                <li>
+                  <span class="con">메모리 누수</span>
+                  <span>Unsubscribe 누락 시 Observer가 GC되지 않음 — OnDestroy에서 반드시 해제</span>
+                </li>
+                <li>
+                  <span class="con">순서 미보장</span>
+                  <span>여러 Observer 간 호출 순서가 보장되지 않음</span>
+                </li>
+                <li>
+                  <span class="con">순환 참조</span>
+                  <span>Observer가 Subject를 다시 변경하면 무한 루프 위험</span>
+                </li>
+                <li>
+                  <span class="con">디버깅 어려움</span>
+                  <span>이벤트 체인이 길어질수록 흐름 추적이 복잡해짐</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="use-section fragment" data-fragment-index="3">
+            <h3>🎯 언제 쓰나</h3>
+            <ul>
+              <li>UI 바인딩 — HP, 코인, 퀘스트, 인벤토리 상태 표시</li>
+              <li>게임 상태(Playing / Paused / GameOver) 전파</li>
+              <li>이벤트 버스 — 시스템 간 직접 참조 없이 메시지 교환</li>
+              <li>멀티플레이 상태 동기화 트리거</li>
+              <li>UniRx · R3 · MVVM 아키텍처 기반 설계</li>
+            </ul>
+          </div>
+
+          <aside class="notes">
+            가장 중요한 단점은 메모리 누수입니다.
+            UniRx라면 AddTo(this), C# 이벤트라면 OnDestroy에서 -= 처리, R3라면 Dispose를 CompositeDisposable로 묶어야 합니다.
+            이것만 지키면 나머지 단점은 충분히 관리 가능합니다.
+          </aside>
+        </section>
+
+        <!-- ============================================
+             PAGE 18: Q&A
+             ============================================ -->
+        <section class="page-guide">
+          <div class="qa-block">
+            <h2>Q &amp; A</h2>
+            <p class="qa-reference">
+              참고:
+              <a href="https://github.com/Unity-Technologies/game-programming-patterns-demo" target="_blank" rel="noreferrer">
+                Unity-Technologies/game-programming-patterns-demo
+              </a>
+            </p>
+          </div>
+
+          <aside class="notes">
+            질문 받겠습니다.
+          </aside>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- Reveal.js -->
+    <script src="node_modules/reveal.js/dist/reveal.js"></script>
+    <script src="node_modules/reveal.js/plugin/notes/notes.js"></script>
+    <script src="node_modules/reveal.js/plugin/highlight/highlight.js"></script>
+
+    <script>
+      Reveal.initialize({
+        hash: true,
+        center: true,
+        progress: true,
+        controls: true,
+        controlsTutorial: true,
+        controlsLayout: 'bottom-right',
+        controlsBackArrows: 'faded',
+        keyboard: true,
+        touch: true,
+        overview: true,
+        help: true,
+        transition: 'slide',
+        transitionSpeed: 'default',
+        backgroundTransition: 'fade',
+        autoAnimate: true,
+        autoAnimateDuration: 0.8,
+        autoAnimateEasing: 'ease-in-out',
+        fragments: true,
+        fragmentInURL: true,
+        showNotes: false,
+        pause: true,
+        jumpToSlide: true,
+        viewDistance: 3,
+        mobileViewDistance: 2,
+        plugins: [RevealNotes, RevealHighlight],
+      }).then(() => {
+        console.log('Presentation initialized successfully');
+      }).catch((err) => {
+        console.error('Error initializing presentation:', err);
+      });
+
+      console.log('Keyboard shortcuts: S=Speaker, O/Esc=Overview, F=Fullscreen, B/.=Pause, ?=Help');
+    </script>
+  </body>
+</html>
